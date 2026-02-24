@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-*1mx&1*3n049t2*@j7!z#l%71u!yx&2-%%+h0xxymswvigl6in
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*", ".onrender.com"]
 
 
 # Application definition
@@ -58,7 +58,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'template'],   # ✅ mana shu
+        'DIRS': [BASE_DIR / 'templates'],   # ✅ mana shu
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,5 +129,4 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-ALLOWED_HOSTS = ["*", ".onrender.com"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
