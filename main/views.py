@@ -1,6 +1,13 @@
-from django.urls import path
-from .views import home
+from django.shortcuts import render
+from .models import Profile, Project, Skill
 
-urlpatterns = [
-    path("", home, name="home"),
-]
+def home(request):
+    profile = Profile.objects.first()
+    projects = Project.objects.all()
+    skills = Skill.objects.all().order_by("-level")
+
+    return render(request, "home.html", {
+        "profile": profile,
+        "projects": projects,
+        "skills": skills
+    })
