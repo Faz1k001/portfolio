@@ -1,0 +1,338 @@
+{% load static %}
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <title>{% if profile and profile.full_name %}{{ profile.full_name }}{% else %}My Portfolio{% endif %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="{% if profile and profile.about %}{{ profile.about|truncatechars:140 }}{% else %}Personal portfolio built with Django.{% endif %}">
+
+  <style>
+    :root{
+      --bg1:#070b14; --bg2:#0b1220;
+      --card: rgba(17,27,46,.72);
+      --border: rgba(255,255,255,.10);
+      --text:#e7eefc;
+      --muted: rgba(231,238,252,.75);
+      --accent:#7bb0ff;
+      --accent2:#79ffd7;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --chipbg: rgba(255,255,255,.045);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(123,176,255,.15), transparent 60%),
+        radial-gradient(700px 450px at 85% 25%, rgba(121,255,215,.12), transparent 60%),
+        radial-gradient(800px 600px at 50% 90%, rgba(123,176,255,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    a:focus-visible{outline:2px solid rgba(121,255,215,.65);outline-offset:3px;border-radius:10px}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 50px}
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:6px 0 18px;
+      gap:12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:750;
+      letter-spacing:.3px;
+      color:rgba(231,238,252,.95)
+    }
+
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 0 18px rgba(123,176,255,.35)
+    }
+
+    .pill{
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:13px;
+      backdrop-filter:blur(8px);
+      white-space:nowrap;
+    }
+
+    /* ✅ IIV GERB (TOPBAR BADGE) */
+    .iiv-badge{
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.28);
+      background: radial-gradient(circle at 30% 30%, rgba(123,176,255,.20), rgba(11,18,32,.95));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      box-shadow: 0 0 22px rgba(123,176,255,.35), inset 0 0 12px rgba(255,255,255,.10);
+      transition: transform .25s ease, box-shadow .25s ease;
+      flex: 0 0 auto;
+    }
+    .iiv-badge img{
+      width:44px;
+      height:44px;
+      object-fit:contain;
+      display:block;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+    }
+    .iiv-badge:hover{
+      transform: translateY(-1px) scale(1.05);
+      box-shadow: 0 0 30px rgba(121,255,215,.45), inset 0 0 14px rgba(255,255,255,.16);
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(10px);
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+      padding:18px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-80px -120px auto auto;
+      width:260px;height:260px;border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, rgba(123,176,255,.35), transparent 60%);
+      filter:blur(10px);
+      pointer-events:none;
+    }
+
+    .hero-left{padding:6px 6px 6px 10px}
+    .name{font-size:34px;margin:6px 0;letter-spacing:.2px;line-height:1.15}
+    .title{margin:0 0 12px;color:var(--muted);font-weight:650}
+    .about{margin:0 0 16px;color:rgba(231,238,252,.84);line-height:1.6;max-width:760px}
+
+    .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .chip{
+      display:flex;align-items:center;gap:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--chipbg);
+      color:rgba(231,238,252,.90);
+      font-size:14px;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .chip:hover{
+      transform: translateY(-1px);
+      border-color: rgba(123,176,255,.30);
+      background: rgba(255,255,255,.06);
+    }
+    .chip small{opacity:.92}
+    .chip a{color:rgba(231,238,252,.95)}
+    .chip a:hover{color:var(--accent2);text-decoration:none}
+
+    .hero-right{
+      padding:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .avatar{
+      width:170px;height:170px;
+      border-radius:26px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      overflow:hidden;
+      position:relative;
+      box-shadow:0 14px 40px rgba(0,0,0,.35);
+      transform:rotate(-1deg);
+    }
+    .avatar::after{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(135deg, rgba(123,176,255,.14), rgba(121,255,215,.10));
+      pointer-events:none;
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.03)}
+    .avatar-fallback{height:100%;display:flex;align-items:center;justify-content:center;color:rgba(231,238,252,.65);font-weight:650}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    .section{padding:16px}
+    .section h2{margin:0 0 12px;font-size:18px;letter-spacing:.2px}
+    .muted{color:var(--muted)}
+
+    .skill{padding:10px 12px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.04);margin-bottom:10px}
+    .skill-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .skill-name{font-weight:700}
+    .skill-level{font-size:13px;color:var(--muted)}
+    .bar{width:100%;height:10px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+    .bar>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+      border-radius:999px;box-shadow:0 0 18px rgba(123,176,255,.25);transition:width .75s ease}
+
+    .project{padding:12px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.04);margin-bottom:12px;
+      transition:transform .15s ease,border-color .15s ease,background .15s ease}
+    .project:hover{transform:translateY(-2px);border-color:rgba(123,176,255,.28);background:rgba(255,255,255,.05)}
+    .project-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+    .project b{font-size:16px}
+    .project p{margin:6px 0 0;color:rgba(231,238,252,.82);line-height:1.5}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;border:1px solid rgba(123,176,255,.30);
+      background:rgba(123,176,255,.10);color:rgba(231,238,252,.96);font-size:13px;white-space:nowrap}
+    .btn:hover{border-color:rgba(121,255,215,.38);background:rgba(121,255,215,.10);text-decoration:none}
+
+    footer{margin-top:18px;text-align:center;color:rgba(231,238,252,.6);font-size:13px}
+
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .hero-right{justify-content:flex-start}
+      .avatar{width:150px;height:150px;border-radius:22px}
+      .name{font-size:30px}
+      .grid{grid-template-columns:1fr}
+
+      .iiv-badge{width:56px;height:56px}
+      .iiv-badge img{width:38px;height:38px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><div class="dot"></div> My Portfolio</div>
+
+      <!-- ✅ 2-yo‘l: rasm static/iiv.png.jpg -->
+      <div class="iiv-badge" title="O‘zbekiston Respublikasi IIV">
+        <img src="{% static 'iiv.png.jpg' %}" alt="" aria-hidden="true">
+      </div>
+
+      <div class="pill">{% if profile and profile.title %}{{ profile.title }}{% else %}Django Portfolio{% endif %}</div>
+    </div>
+
+    <div class="card hero">
+      <div class="hero-left">
+        <h1 class="name">{% if profile and profile.full_name %}{{ profile.full_name }}{% else %}Ism/F.I.O{% endif %}</h1>
+
+        <div class="title">
+          {% if profile and profile.title %}{{ profile.title }}{% else %}(Admin paneldan title yozing){% endif %}
+        </div>
+
+        <p class="about">
+          {% if profile and profile.about %}{{ profile.about }}{% else %}Admin paneldan about yozsangiz bu yerda chiqadi.{% endif %}
+        </p>
+
+        <div class="chips">
+          {% if profile and profile.location %}
+            <div class="chip">📍 <span>{{ profile.location }}</span></div>
+          {% endif %}
+
+          {% if profile and profile.email %}
+            <div class="chip">✉️
+              <a href="mailto:{{ profile.email }}?subject=Portfolio%20contact%20from%20website" rel="noopener noreferrer">
+                {{ profile.email }}
+              </a>
+            </div>
+          {% endif %}
+
+          {% if profile and profile.phone %}
+            <div class="chip">☎️
+              <a href="tel:{{ profile.phone|cut:' '|cut:'-'|cut:'('|cut:')' }}" rel="noopener noreferrer">
+                {{ profile.phone }}
+              </a>
+            </div>
+          {% endif %}
+
+          {% if profile and profile.telegram %}
+            <div class="chip">💬 <span>Telegram:</span>
+              <small>
+                <a href="https://t.me/{{ profile.telegram|cut:'@' }}" target="_blank" rel="noopener noreferrer">
+                  @{{ profile.telegram|cut:'@' }}
+                </a>
+              </small>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="avatar">
+          {% if profile and profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="Profile photo">
+          {% else %}
+            <div class="avatar-fallback">No Photo</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card section">
+        <h2>Skills</h2>
+
+        {% for s in skills %}
+          <div class="skill">
+            <div class="skill-head">
+              <div class="skill-name">{{ s.name|title }}</div>
+              <div class="skill-level">{{ s.level }}%</div>
+            </div>
+            <div class="bar"><i data-level="{{ s.level }}"></i></div>
+          </div>
+        {% empty %}
+          <p class="muted">Hozircha skill yo‘q.</p>
+        {% endfor %}
+      </div>
+
+      <div class="card section">
+        <h2>Projects</h2>
+
+        {% for p in projects %}
+          <div class="project">
+            <div class="project-top">
+              <b>{{ p.name }}</b>
+              {% if p.link %}
+                <a class="btn" href="{{ p.link }}" target="_blank" rel="noopener noreferrer">🔗 Link</a>
+              {% endif %}
+            </div>
+            <p>{{ p.description }}</p>
+          </div>
+        {% empty %}
+          <p class="muted">Hozircha project yo‘q.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <footer>© <span id="year"></span> {% if profile and profile.full_name %}{{ profile.full_name }}{% else %}My Portfolio{% endif %}</footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    document.querySelectorAll(".bar i[data-level]").forEach(el => {
+      const v = parseInt(el.dataset.level || "0", 10);
+      el.style.width = v + "%";
+    });
+  </script>
+</body>
+</html>
