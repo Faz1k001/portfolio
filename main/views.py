@@ -10,3 +10,7 @@ def home(request):
         "projects": projects,
         "skills": skills
     })
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'home.html')
