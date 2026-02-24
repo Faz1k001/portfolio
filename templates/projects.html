@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Projects | Portfolio{% endblock %}
+{% block content %}
+  <h1 style="margin:0 0 14px">Projects</h1>
+  <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+    {% for p in projects %}
+      <div class="card" style="padding:18px">
+        <h3 style="margin:0 0 8px">{{ p.name }}</h3>
+        <p class="muted" style="margin:0 0 10px">{{ p.description }}</p>
+        {% if p.link %}
+          <a href="{{ p.link }}" target="_blank">Open →</a>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  <style>@media(max-width:900px){ .grid{grid-template-columns:1fr !important;} }</style>
+{% endblock %}

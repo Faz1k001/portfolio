@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Contact | Portfolio{% endblock %}
+{% block content %}
+  <div class="card" style="padding:22px">
+    <h1 style="margin:0 0 12px">Contact</h1>
+    <p class="muted" style="margin:0 0 8px">Email: <b>{{ profile.email }}</b></p>
+    <p class="muted" style="margin:0 0 8px">Phone: <b>{{ profile.phone }}</b></p>
+    <p class="muted" style="margin:0">Telegram: <b>{{ profile.telegram }}</b></p>
+  </div>
+{% endblock %}
